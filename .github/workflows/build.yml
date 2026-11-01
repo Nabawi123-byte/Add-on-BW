@@ -1,0 +1,23 @@
+name: Build MASTER BW
+
+on:
+  push:
+    branches: ['**']
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+      - name: Bangun paket rilis (uji + add-in + fungsi Excel + mesin AI win-x64)
+        run: ./scripts/build-release.sh
+      - name: Unggah paket siap pasang
+        uses: actions/upload-artifact@v4
+        with:
+          name: MasterBW-paket-instalasi
+          path: dist/MasterBW
+          retention-days: 30

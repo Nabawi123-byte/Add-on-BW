@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Fungsi sel Excel MASTER BW (Excel-DNA): =AI(), =AI.RINGKAS(), =TERBILANG(), =TANGGAL.INDO(), dll. -->
+  <PropertyGroup>
+    <TargetFramework>net48</TargetFramework>
+    <RootNamespace>MasterBW.Functions</RootNamespace>
+    <ExcelAddInName>MASTER BW Fungsi</ExcelAddInName>
+    <ExcelDnaCreate32BitAddIn>true</ExcelDnaCreate32BitAddIn>
+    <ExcelDnaCreate64BitAddIn>true</ExcelDnaCreate64BitAddIn>
+    <RunExcelDnaPack>true</RunExcelDnaPack>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all" />
+    <PackageReference Include="ExcelDna.AddIn" Version="1.9.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MasterBW.Core\MasterBW.Core.csproj" />
+  </ItemGroup>
+</Project>

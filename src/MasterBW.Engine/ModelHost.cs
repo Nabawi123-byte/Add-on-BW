@@ -74,7 +74,6 @@ public sealed class ModelHost : IDisposable
             BatchThreads = threads,
             BatchSize = 512,
             UBatchSize = 512,
-            FlashAttention = true,
         };
         var sw = Stopwatch.StartNew();
         _weights = LLamaWeights.LoadFromFile(_params);
@@ -305,9 +304,13 @@ public sealed class ModelHost : IDisposable
 
     private async Task EnsureInferred(CancellationToken ct)
     {
-        if (!_conversation!.RequiresInference) return;
-        var res = await _executor!.Infer(ct);
-        if (res != DecodeResult.Ok) throw new InvalidOperationException("Inferensi gagal: " + res + ". Coba kurangi panjang teks.");
+        // Infer() hanya memproses satu batch (maks. BatchSize token) per panggilan, jadi prompt panjang perlu diulang.
+        while (_conversation!.RequiresInference)
+        {
+            ct.ThrowIfCancellationRequested();
+            var res = await _executor!.Infer(ct);
+            if (res != DecodeResult.Ok) throw new InvalidOperationException("Inferensi gagal: " + res + ". Coba kurangi panjang teks.");
+        }
     }
 
     private void ResetConversation()
