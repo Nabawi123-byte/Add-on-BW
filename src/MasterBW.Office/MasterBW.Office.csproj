@@ -15,7 +15,6 @@
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Drawing" />
     <Reference Include="Microsoft.CSharp" />
-    <EmbeddedResource Include="Ribbon\*.xml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MasterBW.Core\MasterBW.Core.csproj" />
