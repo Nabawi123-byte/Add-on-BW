@@ -1,0 +1,33 @@
+{
+  "name": "master-office-addin",
+  "version": "1.0.0",
+  "description": "Master: asisten perintah untuk Microsoft Word dan Excel (AI Claude saat online, mesin perintah lokal saat offline)",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build.js",
+    "postinstall": "node scripts/build.js",
+    "start": "node server.js",
+    "test": "node --test tests/*.test.js",
+    "manifest": "node scripts/manifest.js",
+    "icons": "node scripts/make-icons.js",
+    "certs": "office-addin-dev-certs install --days 3650",
+    "register": "office-addin-dev-settings register manifest-excel.xml && office-addin-dev-settings register manifest-word.xml",
+    "unregister": "office-addin-dev-settings unregister manifest-excel.xml && office-addin-dev-settings unregister manifest-word.xml",
+    "validate": "office-addin-manifest validate manifest-excel.xml && office-addin-manifest validate manifest-word.xml",
+    "sideload:excel": "office-addin-dev-settings sideload manifest-excel.xml excel",
+    "sideload:word": "office-addin-dev-settings sideload manifest-word.xml word",
+    "test:e2e": "node scripts/build.js && node tests/e2e/smoke.mjs"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^1.1.110",
+    "@microsoft/office-js": "^1.1.110"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.2",
+    "office-addin-debugging": "^7.0.1",
+    "office-addin-dev-certs": "^3.0.1",
+    "office-addin-manifest": "^3.0.1",
+    "office-addin-dev-settings": "^4.0.1"
+  }
+}

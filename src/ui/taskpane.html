@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <title>Master</title>
+    <link rel="stylesheet" href="taskpane.css" />
+    <script>
+      // office.js dimuat dari server lokal (bisa offline); bila tidak ada, ambil dari CDN Microsoft.
+      (function () {
+        function load(src, ok, fail) {
+          var s = document.createElement('script');
+          s.src = src;
+          s.onload = ok;
+          s.onerror = fail;
+          document.head.appendChild(s);
+        }
+        function app() {
+          load('taskpane.js');
+        }
+        load('office-js/office.js', app, function () {
+          load('https://appsforoffice.microsoft.com/lib/1/hosted/office.js', app, app);
+        });
+      })();
+    </script>
+  </head>
+  <body>
+    <header>
+      <div class="brand"><img src="assets/icon-32.png" alt="" width="22" height="22" /><b>Master</b><span id="hostBadge" class="badge host">…</span></div>
+      <div class="status">
+        <span id="netBadge" class="badge">…</span>
+        <select id="modeSelect" title="Mode kerja">
+          <option value="auto">Otomatis</option>
+          <option value="ai">Selalu AI</option>
+          <option value="offline">Offline saja</option>
+        </select>
+      </div>
+    </header>
+
+    <nav>
+      <button class="tab active" data-tab="chat">Perintah</button>
+      <button class="tab" data-tab="templates">Template</button>
+      <button class="tab" data-tab="macros">Makro</button>
+      <button class="tab" data-tab="settings">Pengaturan</button>
+    </nav>
+
+    <main>
+      <section id="panel-chat" class="panel">
+        <div class="toolbar">
+          <button id="newChat" class="ghost small" type="button">＋ Percakapan baru</button>
+          <button id="helpBtn" class="ghost small" type="button">? Bantuan</button>
+        </div>
+        <div id="log" aria-live="polite"></div>
+        <div id="queueBar" class="queue" hidden>
+          📥 <span id="queueCount">0</span> perintah menunggu internet
+          <button id="runQueue" class="primary small" type="button">Jalankan antrean</button>
+          <button id="clearQueue" class="ghost small" type="button">Hapus</button>
+        </div>
+        <div id="suggestions" class="chips"></div>
+        <div class="composer">
+          <textarea id="input" rows="1" placeholder="Ketik perintah… (Enter kirim, Shift+Enter baris baru)"></textarea>
+          <button id="sendBtn" class="send" type="button" title="Kirim">➤</button>
+          <button id="stopBtn" class="send stop" type="button" title="Hentikan" hidden>■</button>
+        </div>
+      </section>
+
+      <section id="panel-templates" class="panel" hidden>
+        <p class="muted">Template siap pakai — berjalan tanpa internet.</p>
+        <div id="templateForm" hidden></div>
+        <div id="templateList" class="cards"></div>
+      </section>
+
+      <section id="panel-macros" class="panel" hidden>
+        <div id="macroList"></div>
+        <form class="tform" onsubmit="return false">
+          <h3>Makro baru</h3>
+          <label for="macroName">Nama makro</label>
+          <input id="macroName" placeholder="mis. laporan bulanan" />
+          <label for="macroCommands">Perintah (satu per baris)</label>
+          <textarea id="macroCommands" rows="5" placeholder="buat laporan arus kas&#10;bekukan header&#10;sheet baru Rekap"></textarea>
+          <div class="row">
+            <button id="saveMacro" class="primary" type="button">Simpan makro</button>
+            <button id="fromHistory" class="ghost" type="button">Ambil 5 perintah terakhir</button>
+          </div>
+        </form>
+      </section>
+
+      <section id="panel-settings" class="panel" hidden>
+        <form class="tform" onsubmit="return false">
+          <h3>Koneksi Claude (AI)</h3>
+          <label for="apiKey">API key Anthropic</label>
+          <div class="row">
+            <input id="apiKey" type="password" autocomplete="off" placeholder="sk-ant-..." />
+            <button id="toggleKey" class="ghost small" type="button">👁</button>
+          </div>
+          <p class="muted">Dapatkan di console.anthropic.com → API Keys. Key disimpan hanya di komputer ini dan dikirim langsung ke Anthropic. Pemakaian API ditagih terpisah dari langganan Claude.</p>
+          <label for="model">Model</label>
+          <select id="model"></select>
+          <label for="effort">Tingkat berpikir</label>
+          <select id="effort">
+            <option value="low">Rendah (cepat, hemat)</option>
+            <option value="medium">Sedang (disarankan)</option>
+            <option value="high">Tinggi (tugas rumit)</option>
+            <option value="xhigh">Sangat tinggi</option>
+          </select>
+          <label for="codePolicy">Kode khusus dari AI</label>
+          <select id="codePolicy">
+            <option value="ask">Tanya saya dulu (disarankan)</option>
+            <option value="always">Selalu izinkan</option>
+            <option value="never">Jangan pernah</option>
+          </select>
+          <div class="row">
+            <button id="testKey" class="ghost" type="button">Uji koneksi</button>
+            <span id="keyStatus" class="muted"></span>
+          </div>
+
+          <h3>Profil (untuk surat & dokumen)</h3>
+          <div id="profileFields"></div>
+
+          <div class="row">
+            <button id="saveSettings" class="primary" type="button">Simpan pengaturan</button>
+            <button id="clearHistory" class="ghost" type="button">Hapus riwayat</button>
+          </div>
+          <p class="muted">Master 1.0 · Perintah offline, template, makro, dan antrean berjalan tanpa internet. AI Claude dipakai saat online.</p>
+        </form>
+      </section>
+    </main>
+
+    <div id="modal" class="modal" hidden>
+      <div class="dialog">
+        <h3 id="modalTitle"></h3>
+        <div id="modalBody"></div>
+        <div class="row end">
+          <button id="modalCancel" class="ghost" type="button">Tolak</button>
+          <button id="modalOk" class="primary" type="button">Jalankan</button>
+        </div>
+      </div>
+    </div>
+    <div id="toast" class="toast" hidden></div>
+  </body>
+</html>

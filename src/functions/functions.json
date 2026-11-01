@@ -1,0 +1,21 @@
+{
+  "functions": [
+    {
+      "id": "TERBILANG",
+      "name": "TERBILANG",
+      "description": "Mengubah angka menjadi kata-kata bahasa Indonesia (terbilang).",
+      "result": { "type": "string" },
+      "parameters": [
+        { "name": "angka", "description": "Angka atau sel berisi angka", "type": "number" },
+        { "name": "rupiah", "description": "TRUE (default) menambahkan kata 'rupiah'", "type": "boolean", "optional": true }
+      ]
+    },
+    {
+      "id": "RUPIAH",
+      "name": "RUPIAH",
+      "description": "Menampilkan angka sebagai teks Rupiah, misalnya Rp 1.500.000.",
+      "result": { "type": "string" },
+      "parameters": [{ "name": "angka", "description": "Angka atau sel berisi angka", "type": "number" }]
+    }
+  ]
+}

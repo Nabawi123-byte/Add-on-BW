@@ -1,0 +1,23 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <script>
+      (function () {
+        var s = document.createElement('script');
+        s.src = 'office-js/office.js';
+        s.onload = function () {
+          Office.onReady(function () {});
+        };
+        s.onerror = function () {
+          var c = document.createElement('script');
+          c.src = 'https://appsforoffice.microsoft.com/lib/1/hosted/office.js';
+          document.head.appendChild(c);
+        };
+        document.head.appendChild(s);
+      })();
+    </script>
+  </head>
+  <body></body>
+</html>
