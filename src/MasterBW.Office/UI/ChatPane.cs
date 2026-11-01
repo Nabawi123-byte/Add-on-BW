@@ -22,7 +22,7 @@ namespace MasterBW.Office.UI
         private readonly Label _status = new Label { Dock = DockStyle.Bottom, Height = 34, Font = Theme.Small, ForeColor = Theme.Muted, Padding = new Padding(6, 2, 6, 2) };
         private readonly Button _send = Theme.Button("Kirim", true);
         private readonly Button _stop = Theme.Button("■ Stop");
-        private readonly Button _mic = Theme.Button("🎤");
+        private readonly Button _mic = Theme.Button("Suara");
         private readonly Button _undo = Theme.Button("↶ Batalkan");
         private readonly List<ChatMessage> _history = new List<ChatMessage>();
         private CancellationTokenSource _cts;
@@ -217,13 +217,13 @@ namespace MasterBW.Office.UI
                 if (!_recorder.IsRecording)
                 {
                     _recorder.Start();
-                    _mic.Text = "⏺ Selesai";
+                    _mic.Text = "Selesai";
                     _mic.BackColor = Color.MistyRose;
                     SetStatus("Merekam… klik lagi bila selesai bicara.");
                     return;
                 }
                 var wav = _recorder.Stop();
-                _mic.Text = "🎤"; _mic.BackColor = Color.White;
+                _mic.Text = "Suara"; _mic.BackColor = Color.White;
                 SetStatus("Mengubah suara menjadi teks (offline)…");
                 await _ctl.Ai.EnsureReadyAsync(CancellationToken.None);
                 var text = await _ctl.Ai.Client.TranscribeAsync(wav, CancellationToken.None);
@@ -232,7 +232,7 @@ namespace MasterBW.Office.UI
             }
             catch (Exception ex)
             {
-                _mic.Text = "🎤"; _mic.BackColor = Color.White;
+                _mic.Text = "Suara"; _mic.BackColor = Color.White;
                 AppendResult(false, "Input suara: " + ex.Message);
             }
         }

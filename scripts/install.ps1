@@ -51,6 +51,22 @@ if (Test-Path "$src\models") { Get-ChildItem "$src\models\*" -Include *.gguf, *.
 Get-ChildItem $Target -Recurse -File | Unblock-File -ErrorAction SilentlyContinue
 Ok "Berkas tersalin"
 
+# ---- 2b. Runtime Visual C++ (dibutuhkan llama.cpp) ----
+$vcDlls = 'msvcp140.dll', 'vcruntime140.dll', 'vcruntime140_1.dll', 'vcomp140.dll'
+$vcMissing = $vcDlls | Where-Object { -not (Test-Path "$Target\engine\$_") -and -not (Test-Path "$env:WINDIR\System32\$_") }
+if ($vcMissing) {
+  Warn "Microsoft Visual C++ Redistributable belum lengkap (tidak ada: $($vcMissing -join ', '))."
+  Info "Mengunduh dan memasang VC++ Redistributable x64 (akan muncul permintaan izin Windows)..."
+  try {
+    $vc = "$env:TEMP\vc_redist.x64.exe"
+    Invoke-WebRequest -Uri 'https://aka.ms/vs/17/release/vc_redist.x64.exe' -OutFile $vc -UseBasicParsing
+    Start-Process $vc -ArgumentList '/install', '/passive', '/norestart' -Verb RunAs -Wait
+    Ok "VC++ Redistributable terpasang"
+  } catch {
+    Warn "Gagal memasang otomatis. Pasang manual dari https://aka.ms/vs/17/release/vc_redist.x64.exe"
+  }
+} else { Ok "Runtime Visual C++ tersedia" }
+
 # ---- 3. Daftarkan komponen COM (HKCU, tanpa admin) ----
 $dll = "$Target\addin\MasterBW.Office.dll"
 if (-not (Test-Path $dll)) { throw "MasterBW.Office.dll tidak ditemukan di $Target\addin" }

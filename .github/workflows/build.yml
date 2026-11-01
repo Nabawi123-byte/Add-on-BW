@@ -7,14 +7,33 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '8.0.x'
-      - name: Bangun paket rilis (uji + add-in + fungsi Excel + mesin AI win-x64)
+          dotnet-version: '10.0.x'
+      - name: Bangun paket rilis (uji + add-in + fungsi Excel + mesin AI win-x64 + runtime VC++)
+        shell: bash
         run: ./scripts/build-release.sh
+      - name: Periksa isi paket
+        shell: pwsh
+        run: |
+          foreach ($f in 'engine\MasterBW.Engine.exe','engine\msvcp140.dll','engine\vcruntime140.dll','engine\vcomp140.dll','engine\runtimes\win-x64\native\avx2\llama.dll','addin\MasterBW.Office.dll','INSTALL.cmd') {
+            if (-not (Test-Path "dist\MasterBW\$f")) { throw "Tidak ada: $f" }
+          }
+          Write-Host "Isi paket lengkap."
+      - name: Uji mesin AI bisa memuat llama.cpp di Windows
+        shell: pwsh
+        run: |
+          $env:MASTERBW_HOME = "$env:RUNNER_TEMP\mbw"
+          $p = Start-Process dist\MasterBW\engine\MasterBW.Engine.exe -ArgumentList '--keep-alive' -WorkingDirectory dist\MasterBW\engine -PassThru
+          Start-Sleep -Seconds 10
+          $h = Invoke-RestMethod http://127.0.0.1:47821/health
+          $h | ConvertTo-Json
+          Get-Content "$env:MASTERBW_HOME\logs\*.log" | Select-String 'llama.cpp siap|ERROR' | Select-Object -First 5
+          Stop-Process -Id $p.Id -Force
+          if ($h.error -like '*llama*') { throw "llama.cpp gagal dimuat: $($h.error)" }
       - name: Unggah paket siap pasang
         uses: actions/upload-artifact@v4
         with:

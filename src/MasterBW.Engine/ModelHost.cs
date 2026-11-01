@@ -59,6 +59,7 @@ public sealed class ModelHost : IDisposable
     private void EnsureLoaded()
     {
         if (_weights != null) return;
+        if (NativeCheck.Error != null) throw new InvalidOperationException(NativeCheck.Error);
         var path = ResolveModelPath();
         if (!File.Exists(path))
         {
@@ -280,6 +281,15 @@ public sealed class ModelHost : IDisposable
         {
             ResetConversation();
             throw;
+        }
+        catch (TypeInitializationException ex)
+        {
+            // Pustaka native gagal dimuat; status ini permanen di proses ini → engine keluar agar dinyalakan ulang bersih.
+            Log.Error("Pustaka native gagal dimuat", ex);
+            result.Error = NativeCheck.Explain(ex);
+            result.Seconds = sw.Elapsed.TotalSeconds;
+            _ = Task.Run(async () => { await Task.Delay(1500); Environment.Exit(3); });
+            return result;
         }
         catch (Exception ex)
         {

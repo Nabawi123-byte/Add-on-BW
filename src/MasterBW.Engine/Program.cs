@@ -26,6 +26,7 @@ if (!firstInstance && !args.Contains("--test"))
     return;
 }
 
+NativeCheck.Run(baseDir);
 var host = new ModelHost(settings, modelsDir);
 var speechPath = Path.IsPathRooted(settings.SpeechModelFile) ? settings.SpeechModelFile : Path.Combine(modelsDir, settings.SpeechModelFile);
 var speech = new SpeechHost(speechPath);
@@ -89,7 +90,7 @@ app.MapGet("/health", () => Results.Text(JsonConvert.SerializeObject(new EngineS
     Threads = host.Threads,
     SpeechAvailable = speech.Available,
     Busy = host.Busy,
-    Error = File.Exists(host.ResolveModelPath()) ? host.LoadError : "File model belum ada di " + modelsDir,
+    Error = NativeCheck.Error ?? (File.Exists(host.ResolveModelPath()) ? host.LoadError : "File model belum ada di " + modelsDir),
 }), "application/json"));
 
 app.MapPost("/v1/generate", async (HttpContext ctx) =>

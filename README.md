@@ -77,7 +77,7 @@ Excel ── MasterBW.Functions.xll (Excel-DNA: =AI(), =TERBILANG(), …)
 
 ## 5. Membangun dari sumber
 
-Butuh .NET SDK 8. Bisa di Windows, Linux, atau macOS:
+Butuh .NET SDK 10. Bisa di Windows, Linux, atau macOS:
 
 ```bash
 ./scripts/build-release.sh          # uji + build semua + paket dist/MasterBW-<versi>.zip
@@ -90,7 +90,7 @@ Struktur proyek:
 | Proyek | Isi |
 |---|---|
 | `src/MasterBW.Core` | netstandard2.0. Prompt, katalog aksi, grammar, EYD, terbilang, statistik, keuangan, pajak, sitasi, templat |
-| `src/MasterBW.Engine` | net8.0. Server AI lokal (LLamaSharp + Whisper.net) |
+| `src/MasterBW.Engine` | net10.0. Server AI lokal (LLamaSharp + Whisper.net) |
 | `src/MasterBW.Office` | net48. COM add-in Word & Excel: ribbon, panel, eksekutor aksi |
 | `src/MasterBW.Functions` | net48. Fungsi sel Excel (Excel-DNA) |
 | `tests/MasterBW.Core.Tests` | Uji otomatis (64 uji) |
@@ -100,6 +100,7 @@ Struktur proyek:
 | Gejala | Solusi |
 |---|---|
 | Tab MASTER BW tidak muncul | File → Options → Add-ins → Manage: **COM Add-ins** → Go → centang MASTER BW. Jika ada di *Disabled Items*, aktifkan lagi. Jalankan ulang `INSTALL.cmd`. |
+| Error *"type initializer for LLama.Native.NativeApi"* / *"tidak bisa memuat llama.dll"* | Pasang **Microsoft Visual C++ Redistributable x64**: https://aka.ms/vs/17/release/vc_redist.x64.exe, lalu tutup Word & Excel, akhiri proses `MasterBW.Engine` di Task Manager, dan buka lagi. Paket versi terbaru sudah menyertakan DLL ini. |
 | "Mesin AI tidak merespons" | Pengaturan → **Mulai ulang mesin AI**. Lihat log di `%LOCALAPPDATA%\MasterBW\logs`. |
 | "File model tidak ditemukan" | Pengaturan → **Unduh model AI**, atau salin `.gguf` ke folder models. |
 | Lambat | Gunakan mode ⚡ Cepat atau model 1.7B. Tutup aplikasi berat lain. Kecilkan `ContextSize` ke 4096. |
