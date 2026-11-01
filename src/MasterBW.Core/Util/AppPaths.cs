@@ -67,7 +67,7 @@ namespace MasterBW.Core.Util
             var dir = Path.GetDirectoryName(path);
             if (!string.IsNullOrEmpty(dir)) Directory.CreateDirectory(dir);
             var tmp = path + ".tmp";
-            File.WriteAllText(tmp, JsonConvert.SerializeObject(value, Formatting.Indented), Encoding.UTF8);
+            File.WriteAllText(tmp, JsonConvert.SerializeObject(value, Formatting.Indented), new UTF8Encoding(false));
             if (File.Exists(path)) File.Delete(path);
             File.Move(tmp, path);
         }
