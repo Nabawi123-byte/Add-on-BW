@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Logika inti MASTER BW: AI, katalog aksi, bahasa Indonesia, keuangan, statistik, akademik.
+       netstandard2.0 agar bisa dipakai add-in Office (.NET Framework 4.8) dan engine (.NET 8). -->
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <RootNamespace>MasterBW.Core</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+  </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="MasterBW.Core.Tests" />
+  </ItemGroup>
+</Project>

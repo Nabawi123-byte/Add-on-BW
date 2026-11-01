@@ -1,0 +1,13 @@
+bin/
+obj/
+.vs/
+*.user
+*.suo
+packages/
+TestResults/
+*.pfx
+publish/
+dist/
+models/*.gguf
+models/*.bin
+*.log
